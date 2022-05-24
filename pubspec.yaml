@@ -206,6 +206,11 @@ flutter:
     - assets/more/contact.png
     - assets/more/share.png
     - assets/more/notification.png
+    - assets/facebook_logo.jpg
+    - assets/youtube_logo.png
+    - assets/instagram_logo.png
+    - assets/linkedin_logo.png
+    - assets/twitter_logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

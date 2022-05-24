@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "493589571380",
-    "project_id": "tv-7ce8d",
-    "storage_bucket": "tv-7ce8d.appspot.com"
+    "project_number": "385410745435",
+    "project_id": "tv360-6b3a4",
+    "storage_bucket": "tv360-6b3a4.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:493589571380:android:d4d1ee09174bbed0236761",
+        "mobilesdk_app_id": "1:385410745435:android:217e9913598b20313ceb7e",
         "android_client_info": {
-          "package_name": "com.example.new_tv_360"
+          "package_name": "com.comapps.new_tv_360"
         }
       },
       "oauth_client": [
         {
-          "client_id": "493589571380-v03lefi15b6r0eqv3q1kps8fn101kmjl.apps.googleusercontent.com",
+          "client_id": "385410745435-bmgqvc1r66nr1cbdrp3eoqk8fv6fhhj3.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBiIFf5Ry_40NPseguyw9kjgGkEZmhFX74"
+          "current_key": "AIzaSyCcblbDIHYMebFiQiuhg9_esDeeN84NKz4"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "493589571380-v03lefi15b6r0eqv3q1kps8fn101kmjl.apps.googleusercontent.com",
+              "client_id": "385410745435-bmgqvc1r66nr1cbdrp3eoqk8fv6fhhj3.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
