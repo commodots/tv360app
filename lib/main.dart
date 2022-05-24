@@ -3,10 +3,13 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:new_tv_360/pages/articles.dart';
+import 'package:new_tv_360/pages/favourite_articles.dart';
 import 'package:new_tv_360/pages/local_articles.dart';
-import 'package:new_tv_360/pages/search.dart';
-import 'package:new_tv_360/pages/settings.dart';
+import 'package:new_tv_360/pages/about_us.dart';
+import 'package:new_tv_360/pages/news_categories.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'constants.dart';
 
 void main() async{
@@ -21,6 +24,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'TV360 Nigeria',
@@ -45,20 +49,57 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool _notification = false;
   // Firebase Cloud Messeging setup
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
+  checkNotificationSetting() async {
+    final prefs = await SharedPreferences.getInstance();
+    const key = 'notification';
+    final value = prefs.getInt(key) ?? 0;
+    if (value == 0) {
+      setState(() {
+        _notification = false;
+      });
+    } else {
+      setState(() {
+        _notification = true;
+      });
+    }
+  }
 
   int _selectedIndex = 0;
   final List<Widget> _widgetOptions = [
     const Articles(),
     const LocalArticles(),
-    const Search(),
-    const Settings()
+    const AboutUs(),
+    const Categories()
   ];
+
+
+  saveNotificationSetting(bool val) async {
+    final prefs = await SharedPreferences.getInstance();
+    const key = 'notification';
+    final value = val ? 1 : 0;
+    prefs.setInt(key, value);
+    if (value == 1) {
+      setState(() {
+        _notification = true;
+      });
+    } else {
+      setState(() {
+        _notification = false;
+      });
+    }
+    Future.delayed(const Duration(milliseconds: 500), () {
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (BuildContext context) => MyHomePage()));
+    });
+  }
 
   @override
   void initState() {
+    checkNotificationSetting();
     super.initState();
   }
 
@@ -99,33 +140,43 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
+
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+    return SafeArea(top: false, bottom: false,
+      child: Scaffold(
+        key: _drawerKey,
+        body: Center(
+          child: _widgetOptions.elementAt(_selectedIndex),
+        ),
+        endDrawer: Drawer(
+          child: Categories()
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+            backgroundColor: Colors.white,
+            selectedLabelStyle:
+            const TextStyle(fontWeight: FontWeight.w500, fontFamily: "Soleil"),
+            unselectedLabelStyle: const TextStyle(fontFamily: "Soleil"),
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+              BottomNavigationBarItem(icon: Icon(Icons.flare), label: PAGE2_CATEGORY_NAME),
+              BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'About Us'),
+              BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'More'),
+            ],
+            currentIndex: _selectedIndex,
+            fixedColor: Theme.of(context).primaryColor,
+            onTap: _onItemTapped,
+            type: BottomNavigationBarType.fixed),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.white,
-          selectedLabelStyle:
-          const TextStyle(fontWeight: FontWeight.w500, fontFamily: "Soleil"),
-          unselectedLabelStyle: const TextStyle(fontFamily: "Soleil"),
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Icons.flare), label: PAGE2_CATEGORY_NAME),
-            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-            BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'More'),
-          ],
-          currentIndex: _selectedIndex,
-          fixedColor: Theme.of(context).primaryColor,
-          onTap: _onItemTapped,
-          type: BottomNavigationBarType.fixed),
     );
   }
 
   void _onItemTapped(int index) {
-    setState(() {
+    index == 3 ? _drawerKey.currentState?.openEndDrawer()
+        : setState(() {
       _selectedIndex = index;
-    });
+    });;
   }
 }

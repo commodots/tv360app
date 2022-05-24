@@ -83,15 +83,75 @@ class _ArticlesState extends State<Articles> {
   List<dynamic> latestArticles = [];
   Future<List<dynamic>>? _futureLastestArticles;
   Future<List<dynamic>>? _futureFeaturedArticles;
+  final TextEditingController _textFieldController = TextEditingController();
+  String _searchText = "";
+  Future<List<dynamic>>? _futureSearchedArticles;
   ScrollController? _controller;
+  List<dynamic> searchedArticles = [];
+  ScrollController? _searchController;
   int page = 1;
   bool? _infiniteStop;
+  Future<List<dynamic>> fetchSearchedArticles(
+      String searchText, bool empty, int page, bool scrollUpdate) async {
+    try {
+      if (empty) {
+        return searchedArticles;
+      }
+
+      var response = await http.get(Uri.parse("$WORDPRESS_URL/wp-json/wp/v2/posts?search=$searchText&page=$page&per_page=10&_fields=id,date,title,content,custom,link"));
+
+      if (this.mounted) {
+        if (response.statusCode == 200) {
+          setState(() {
+            if (scrollUpdate) {
+              searchedArticles.addAll(json
+                  .decode(response.body)
+                  .map((m) => Article.fromJson(m))
+                  .toList());
+            } else {
+              searchedArticles = json
+                  .decode(response.body)
+                  .map((m) => Article.fromJson(m))
+                  .toList();
+            }
+
+            if (searchedArticles.length % 10 != 0) {
+              _infiniteStop = true;
+            }
+          });
+
+          return searchedArticles;
+        }
+        setState(() {
+          _infiniteStop = true;
+        });
+      }
+    } on SocketException {
+      throw 'No Internet connection';
+    }
+    return searchedArticles;
+  }
+  _searchScrollListener() {
+    var isEnd = _searchController!.offset >= _searchController!.position.maxScrollExtent &&
+        !_searchController!.position.outOfRange;
+    if (isEnd) {
+      setState(() {
+        page += 1;
+        _futureSearchedArticles = fetchSearchedArticles(_searchText, _searchText == "", page, true);
+      });
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     loadInlineBannerAd();
     loadStaticBannerAd();
+    _futureSearchedArticles = fetchSearchedArticles(_searchText, _searchText == "", page, false);
+    _searchController =
+        ScrollController(initialScrollOffset: 0.0, keepScrollOffset: true);
+    _searchController?.addListener(_searchScrollListener);
+    _futureSearchedArticles = fetchSearchedArticles(_searchText, _searchText == "", page, false);
     _futureLastestArticles = fetchLatestArticles(1);
     _futureFeaturedArticles = fetchFeaturedArticles(1);
     _controller = ScrollController(initialScrollOffset: 0.0, keepScrollOffset: true);
@@ -102,6 +162,7 @@ class _ArticlesState extends State<Articles> {
   @override
   void dispose() {
     super.dispose();
+    _textFieldController.dispose();
     _controller?.dispose();
   }
 
@@ -167,38 +228,150 @@ class _ArticlesState extends State<Articles> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: const Image(
-            image: AssetImage('assets/icon.png'),
-            height: 45,
+    return SafeArea(top: false, bottom: false,
+      child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            title: const Image(
+              image: AssetImage('assets/icon.png'),
+              height: 45,
+            ),
+            elevation: 5,
+            backgroundColor: const Color(0xff030f29),
           ),
-          elevation: 5,
-          backgroundColor: const Color(0xff030f29),
-        ),
-        body: Container(
-          decoration: const BoxDecoration(color: Colors.white70),
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            controller: _controller,
-            scrollDirection: Axis.vertical,
+          body: Container(
+            decoration: const BoxDecoration(color: Colors.white70),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              controller: _controller,
+              scrollDirection: Axis.vertical,
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Card(
+                      elevation: 6,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                        child: TextField(
+                            controller: _textFieldController,
+                            decoration: InputDecoration(
+                              labelText: 'Search news',
+                              suffixIcon: _searchText == ""
+                                  ? const Icon(Icons.search)
+                                  : IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () {
+                                  _textFieldController.clear();
+                                  setState(() {
+                                    _searchText = "";
+                                    _futureSearchedArticles =
+                                        fetchSearchedArticles(_searchText,
+                                            _searchText == "", page, false);
+                                  });
+                                },
+                              ),
+                              border: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                            ),
+                            onChanged: (text) {
+                              setState(() {
+                                _searchText = text;
+                                page = 1;
+                                _futureSearchedArticles = fetchSearchedArticles(
+                                    _searchText, _searchText == "", page, false);
+                              });
+                            }),
+                      ),
+                    ),
+                  ),
+                  searchPosts(_futureSearchedArticles!),
+                  if(staticAdLoaded)
+                  //   Container(
+                  //   child: AdWidget(ad: staticAd),
+                  //   width: staticAd.size.width.toDouble(),
+                  //   height: staticAd.size.height.toDouble(),
+                  //   alignment: Alignment.bottomCenter,
+                  // ),
+                    staticBannerAdWidget(),
+                  featuredPost(_futureFeaturedArticles!),
+                  latestPosts(_futureLastestArticles!),
+                ],
+              ),
+            ),
+          )),
+    );
+  }
+
+  Widget searchPosts(Future<List<dynamic>> articles) {
+    return FutureBuilder<List<dynamic>>(
+      future: articles,
+      builder: (context, articleSnapshot) {
+        if (articleSnapshot.hasData) {
+          if (articleSnapshot.data!.length == 0) {
+            return SizedBox();
+          }
+          return Column(
+            children: <Widget>[
+              Column(
+                  children: articleSnapshot.data!.map((item) {
+                    final heroId = item.id.toString() + "-searched";
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SingleArticle(item, heroId),
+                          ),
+                        );
+                      },
+                      child: articleBox(context, item, heroId),
+                    );
+                  }).toList()),
+              !_infiniteStop!
+                  ? Container(
+                  alignment: Alignment.center,
+                  height: 30,
+                  child: LoadingAnimationWidget.waveDots(
+                      size: 60.0,
+                      color: Theme.of(context).accentColor))
+                  : Container()
+            ],
+          );
+        } else if (articleSnapshot.hasError) {
+          return Container(
+            alignment: Alignment.center,
+            margin: const EdgeInsets.fromLTRB(0, 60, 0, 0),
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
             child: Column(
               children: <Widget>[
-                if(staticAdLoaded)
-                //   Container(
-                //   child: AdWidget(ad: staticAd),
-                //   width: staticAd.size.width.toDouble(),
-                //   height: staticAd.size.height.toDouble(),
-                //   alignment: Alignment.bottomCenter,
-                // ),
-                  staticBannerAdWidget(),
-                featuredPost(_futureFeaturedArticles!),
-                latestPosts(_futureLastestArticles!),
+                Image.asset(
+                  "assets/no-internet.png",
+                  width: 250,
+                ),
+                const Text("No Internet Connection."),
+                FlatButton.icon(
+                  icon: const Icon(Icons.refresh),
+                  label: const Text("Reload"),
+                  onPressed: () {
+                    _futureSearchedArticles = fetchSearchedArticles(
+                        _searchText, _searchText == "", page, false);
+                  },
+                )
               ],
             ),
-          ),
-        ));
+          );
+        }
+        return Container(
+            alignment: Alignment.center,
+            width: 300,
+            height: 150,
+            child: LoadingAnimationWidget.waveDots(
+                size: 60.0,
+                color: Theme.of(context).accentColor));
+      },
+    );
   }
 
   Widget inlineBannerAdWidget() {

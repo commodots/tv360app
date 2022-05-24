@@ -35,17 +35,17 @@ Widget articleBoxFeatured(
           ),
         ),
         Positioned(
-          left: 20,
-          top: 80,
-          right: 20,
+          left: 0,
+          top: 155,
+          right: 30,
           child: Container(
             alignment: Alignment.bottomRight,
-            height: 200,
+            height: 160,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+              padding: const EdgeInsets.fromLTRB(40, 15, 140, 15),
               child: Card(
                 child: Container(
-                  padding: const EdgeInsets.fromLTRB(8, 16, 8, 16),
+                  padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
@@ -58,7 +58,7 @@ Widget articleBoxFeatured(
                         style: {
                           // p tag with text_size
                           "h1": Style(
-                            fontSize: const FontSize(20),
+                            fontSize: const FontSize(15),
                             //padding: const EdgeInsets.all(6),
                             backgroundColor: Colors.grey.shade50,
                           ),
@@ -79,7 +79,7 @@ Widget articleBoxFeatured(
                         alignment: Alignment.topLeft,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             Container(
                               decoration: BoxDecoration(color: const Color(0xFFE3E3E3), borderRadius: BorderRadius.circular(3)),

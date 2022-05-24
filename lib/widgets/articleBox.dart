@@ -30,7 +30,7 @@ Widget articleBox(BuildContext context, Article? article, String heroId) {
                           style: {
                             // p tag with text_size
                             "h1": Style(
-                              fontSize: const FontSize(20),
+                              fontSize: const FontSize(15),
                               //padding: EdgeInsets.all(6),
                               backgroundColor: Colors.grey.shade50,
                             ),
