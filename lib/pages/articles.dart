@@ -228,150 +228,38 @@ class _ArticlesState extends State<Articles> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(top: false, bottom: false,
-      child: Scaffold(
-          backgroundColor: Colors.white,
-          appBar: AppBar(
-            title: const Image(
-              image: AssetImage('assets/icon.png'),
-              height: 45,
-            ),
-            elevation: 5,
-            backgroundColor: const Color(0xff030f29),
+    return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: const Image(
+            image: AssetImage('assets/icon.png'),
+            height: 45,
           ),
-          body: Container(
-            decoration: const BoxDecoration(color: Colors.white70),
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              controller: _controller,
-              scrollDirection: Axis.vertical,
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Card(
-                      elevation: 6,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
-                        child: TextField(
-                            controller: _textFieldController,
-                            decoration: InputDecoration(
-                              labelText: 'Search news',
-                              suffixIcon: _searchText == ""
-                                  ? const Icon(Icons.search)
-                                  : IconButton(
-                                icon: const Icon(Icons.close),
-                                onPressed: () {
-                                  _textFieldController.clear();
-                                  setState(() {
-                                    _searchText = "";
-                                    _futureSearchedArticles =
-                                        fetchSearchedArticles(_searchText,
-                                            _searchText == "", page, false);
-                                  });
-                                },
-                              ),
-                              border: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                            ),
-                            onChanged: (text) {
-                              setState(() {
-                                _searchText = text;
-                                page = 1;
-                                _futureSearchedArticles = fetchSearchedArticles(
-                                    _searchText, _searchText == "", page, false);
-                              });
-                            }),
-                      ),
-                    ),
-                  ),
-                  searchPosts(_futureSearchedArticles!),
-                  if(staticAdLoaded)
-                  //   Container(
-                  //   child: AdWidget(ad: staticAd),
-                  //   width: staticAd.size.width.toDouble(),
-                  //   height: staticAd.size.height.toDouble(),
-                  //   alignment: Alignment.bottomCenter,
-                  // ),
-                    staticBannerAdWidget(),
-                  featuredPost(_futureFeaturedArticles!),
-                  latestPosts(_futureLastestArticles!),
-                ],
-              ),
-            ),
-          )),
-    );
-  }
-
-  Widget searchPosts(Future<List<dynamic>> articles) {
-    return FutureBuilder<List<dynamic>>(
-      future: articles,
-      builder: (context, articleSnapshot) {
-        if (articleSnapshot.hasData) {
-          if (articleSnapshot.data!.length == 0) {
-            return SizedBox();
-          }
-          return Column(
-            children: <Widget>[
-              Column(
-                  children: articleSnapshot.data!.map((item) {
-                    final heroId = item.id.toString() + "-searched";
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SingleArticle(item, heroId),
-                          ),
-                        );
-                      },
-                      child: articleBox(context, item, heroId),
-                    );
-                  }).toList()),
-              !_infiniteStop!
-                  ? Container(
-                  alignment: Alignment.center,
-                  height: 30,
-                  child: LoadingAnimationWidget.waveDots(
-                      size: 60.0,
-                      color: Theme.of(context).accentColor))
-                  : Container()
-            ],
-          );
-        } else if (articleSnapshot.hasError) {
-          return Container(
-            alignment: Alignment.center,
-            margin: const EdgeInsets.fromLTRB(0, 60, 0, 0),
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
+          elevation: 5,
+          backgroundColor: const Color(0xff030f29),
+        ),
+        body: Container(
+          decoration: const BoxDecoration(color: Colors.white70),
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            controller: _controller,
+            scrollDirection: Axis.vertical,
             child: Column(
               children: <Widget>[
-                Image.asset(
-                  "assets/no-internet.png",
-                  width: 250,
-                ),
-                const Text("No Internet Connection."),
-                FlatButton.icon(
-                  icon: const Icon(Icons.refresh),
-                  label: const Text("Reload"),
-                  onPressed: () {
-                    _futureSearchedArticles = fetchSearchedArticles(
-                        _searchText, _searchText == "", page, false);
-                  },
-                )
+                if(staticAdLoaded)
+                //   Container(
+                //   child: AdWidget(ad: staticAd),
+                //   width: staticAd.size.width.toDouble(),
+                //   height: staticAd.size.height.toDouble(),
+                //   alignment: Alignment.bottomCenter,
+                // ),
+                  staticBannerAdWidget(),
+                featuredPost(_futureFeaturedArticles!),
+                latestPosts(_futureLastestArticles!),
               ],
             ),
-          );
-        }
-        return Container(
-            alignment: Alignment.center,
-            width: 300,
-            height: 150,
-            child: LoadingAnimationWidget.waveDots(
-                size: 60.0,
-                color: Theme.of(context).accentColor));
-      },
-    );
+          ),
+        ));
   }
 
   Widget inlineBannerAdWidget() {

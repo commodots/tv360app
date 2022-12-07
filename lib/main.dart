@@ -2,8 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:new_tv_360/pages/articles.dart';
 import 'package:new_tv_360/pages/favourite_articles.dart';
+import 'package:new_tv_360/pages/search.dart';
+import 'package:new_tv_360/pages/settings.dart';
 import 'package:new_tv_360/pages/local_articles.dart';
 import 'package:new_tv_360/pages/about_us.dart';
 import 'package:new_tv_360/pages/news_categories.dart';
@@ -72,6 +73,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<Widget> _widgetOptions = [
     const Articles(),
     const LocalArticles(),
+    const Search(),
+    const Settings(),
     const AboutUs(),
     const Categories()
   ];
@@ -145,38 +148,31 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(top: false, bottom: false,
-      child: Scaffold(
-        key: _drawerKey,
-        body: Center(
-          child: _widgetOptions.elementAt(_selectedIndex),
-        ),
-        endDrawer: Drawer(
-          child: Categories()
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-            backgroundColor: Colors.white,
-            selectedLabelStyle:
-            const TextStyle(fontWeight: FontWeight.w500, fontFamily: "Soleil"),
-            unselectedLabelStyle: const TextStyle(fontFamily: "Soleil"),
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-              BottomNavigationBarItem(icon: Icon(Icons.flare), label: PAGE2_CATEGORY_NAME),
-              BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'About Us'),
-              BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'More'),
-            ],
-            currentIndex: _selectedIndex,
-            fixedColor: Theme.of(context).primaryColor,
-            onTap: _onItemTapped,
-            type: BottomNavigationBarType.fixed),
+     return Scaffold(
+      body: Center(
+        child: _widgetOptions.elementAt(_selectedIndex),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.white,
+          selectedLabelStyle:
+          const TextStyle(fontWeight: FontWeight.w500, fontFamily: "Soleil"),
+          unselectedLabelStyle: const TextStyle(fontFamily: "Soleil"),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+            BottomNavigationBarItem(icon: Icon(Icons.flare), label: PAGE2_CATEGORY_NAME),
+            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+            BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'More'),
+          ],
+          currentIndex: _selectedIndex,
+          fixedColor: Theme.of(context).primaryColor,
+          onTap: _onItemTapped,
+          type: BottomNavigationBarType.fixed),
     );
   }
 
   void _onItemTapped(int index) {
-    index == 3 ? _drawerKey.currentState?.openEndDrawer()
-        : setState(() {
+       setState(() {
       _selectedIndex = index;
-    });;
+    });
   }
 }

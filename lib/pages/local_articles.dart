@@ -81,31 +81,29 @@ class _LocalArticlesState extends State<LocalArticles> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(top: false, bottom: false,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text(
-            PAGE2_CATEGORY_NAME,
-            style: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                fontFamily: 'Poppins'),
-          ),
-          elevation: 5,
-          backgroundColor: Colors.white,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          PAGE2_CATEGORY_NAME,
+          style: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              fontFamily: 'Poppins'),
         ),
-        body: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            controller: _controller,
-            child: Column(
-              children: <Widget>[
-                categoryPosts(_futureArticles!),
-              ],
-            )),
+        elevation: 5,
+        backgroundColor: Colors.white,
       ),
+      body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          controller: _controller,
+          child: Column(
+            children: <Widget>[
+              categoryPosts(_futureArticles!),
+            ],
+          )),
     );
   }
 
