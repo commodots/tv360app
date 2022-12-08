@@ -377,19 +377,16 @@ class _ArticlesState extends State<Articles> {
               height: MediaQuery.of(context).size.height,
               child: Column(
                 children: <Widget>[
-                  Image.asset(
-                    "assets/no-internet.png",
-                    width: 250,
-                  ),
-                  const Text("No Internet Connection."),
-                  FlatButton.icon(
-                    icon: const Icon(Icons.refresh),
-                    label: const Text("Reload"),
-                    onPressed: () {
-                      _futureLastestArticles = fetchLatestArticles(1);
-                      _futureFeaturedArticles = fetchFeaturedArticles(1);
-                    },
-                  )
+                  if(staticAdLoaded)
+                //   Container(
+                //   child: AdWidget(ad: staticAd),
+                //   width: staticAd.size.width.toDouble(),
+                //   height: staticAd.size.height.toDouble(),
+                //   alignment: Alignment.bottomCenter,
+                // ),
+                  staticBannerAdWidget(),
+                featuredPost(_futureFeaturedArticles!),
+                latestPosts(_futureLastestArticles!),
                 ],
               ),
             );

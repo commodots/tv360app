@@ -3,8 +3,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:new_tv_360/pages/favourite_articles.dart';
-import 'package:new_tv_360/pages/search.dart';
-import 'package:new_tv_360/pages/settings.dart';
 import 'package:new_tv_360/pages/local_articles.dart';
 import 'package:new_tv_360/pages/about_us.dart';
 import 'package:new_tv_360/pages/news_categories.dart';
@@ -71,10 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int _selectedIndex = 0;
   final List<Widget> _widgetOptions = [
-    const Articles(),
     const LocalArticles(),
-    const Search(),
-    const Settings(),
     const AboutUs(),
     const Categories()
   ];
