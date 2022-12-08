@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "385410745435",
+    "project_id": "tv360-6b3a4",
+    "storage_bucket": "tv360-6b3a4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385410745435:android:217e9913598b20313ceb7e",
+        "android_client_info": {
+          "package_name": "com.admobapps.tv360nigeria"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "385410745435-bmgqvc1r66nr1cbdrp3eoqk8fv6fhhj3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcblbDIHYMebFiQiuhg9_esDeeN84NKz4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "385410745435-bmgqvc1r66nr1cbdrp3eoqk8fv6fhhj3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
